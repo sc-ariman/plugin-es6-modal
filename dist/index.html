@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="ja" itemscope="itemscope" itemtype="http://schema.org/WebPage">
+	<head>
+		<meta charset="UTF-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width,initial-scale=1">
+		<link type="text/css" rel="stylesheet" href="/assets/css/demo.css">
+		<link type="text/css" rel="stylesheet" href="/assets/css/modal.css">
+		<script src="/assets/js/bundle/polyfill.js"></script>
+		<title>ES2015 Modal</title>
+	</head>
+	<body>
+		<div class="wrapper">
+			<header>
+				<h1>
+					ES2015 Modal
+				</h1>
+			</header>
+			<!-- /header -->
+			<main class="content">
+				<div>
+					<button type="button" class="modalBtn">Click Me!! 1</button>
+				</div>
+				<div>
+					<button type="button" class="modalBtn">Click Me!! 2</button>
+				</div>
+			</main>
+			<!-- /.content -->
+			<footer>
+				<div class="copyright" id="copyright">
+					<small>
+						<span itemprop="copyrightYear">2017</span>&copy; <span itemprop="name">ES2015 Modal</span> All Rights Reserved.<br>
+						This software is released under the MIT License.<br>
+					</small>
+				</div>
+			</footer>
+			<!-- / footer -->
+		</div>
+		<!-- /.wrapper -->
+		<script
+			src="//code.jquery.com/jquery-3.1.1.min.js"
+			integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
+			crossorigin="anonymous"></script>
+		<script src="/assets/js/bundle/modal.js"></script>
+		<script>
+			/* global $ Modal */
+			(function(){
+				var btn_1 = $('.modalBtn');
+				var btn_2 = document.querySelectorAll('.modalBtn');
+
+				var modal = new Modal(btn_2);
+
+				modal.onBefore = function(){
+					console.log(this.target);
+					console.log('onBefore');
+					this.nextFlug = true;
+				};
+
+				modal.onBeforeModal = function(){
+					console.log('onBeforeModal');
+					this.nextFlug = true;
+				};
+
+				modal.onModal = function(){
+					console.log('onModal');
+					var content_inner = document.getElementById('content_inner');
+					content_inner.insertAdjacentHTML('beforeend', 'On Modal!');
+				};
+			})();
+		</script>
+	</body>
+</html>

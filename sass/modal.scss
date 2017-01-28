@@ -1,0 +1,99 @@
+@charset "UTF-8";
+@import "mixins";
+
+/*-----------------------------------------------
+component
+-----------------------------------------------*/
+/*---- modal  ----*/
+.modal {
+    z-index: 10;
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background: rgba(0,0,0, .7);
+    opacity: 0;
+
+    &_open {
+        overflow-y: hidden;
+    }
+
+    .modal_wrap {
+        display: table;
+        width: 100%;
+        height: 100%;
+
+        .wrap_body {
+            display: table-cell;
+            width: 100%;
+            height: 100%;
+            vertical-align: middle;
+            text-align: center;
+
+            .body_content {
+                position: relative;
+                max-width: 560px;
+                margin: 0 auto;
+
+                @include mbTab {
+                    width: 80%;
+                }
+
+                .modal_close {
+                    position: absolute;
+                    top: -2rem;
+                    right: 0;
+                    font-size: 3rem;
+                    line-height: 0;
+                    color: #fff;
+                }
+
+                .content_iframe {
+                    position: relative;
+                    width: 100%;
+                    height: 100%;
+                    padding: 75% 0 0;
+
+                    & > * {
+                        position: absolute;
+                        top: 0;
+                        left: 0;
+                        width: 100%;
+                        height: 100%;
+                        background:  #b40d0d;
+                    }
+                }
+            }
+        }
+    }
+}
+
+.loading {
+    z-index: 11;
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    display: none;
+    width: 100%;
+    height: 100%;
+
+    .loading_wrapper {
+        display: table;
+        width: 100%;
+        height: 100%;
+
+        .loading_body {
+            display: table-cell;
+            text-align: center;
+            vertical-align: middle;
+
+            img {
+                max-width: 44px;
+            }
+        }
+    }
+}
