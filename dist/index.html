@@ -7,13 +7,13 @@
 		<link type="text/css" rel="stylesheet" href="/assets/css/demo.css">
 		<link type="text/css" rel="stylesheet" href="/assets/css/modal.css">
 		<script src="/assets/js/bundle/polyfill.js"></script>
-		<title>ES2015 Modal</title>
+		<title>plugin es6 Modal</title>
 	</head>
 	<body>
 		<div class="wrapper">
 			<header>
 				<h1>
-					ES2015 Modal
+					plugin es6 Modal
 				</h1>
 			</header>
 			<!-- /header -->
@@ -29,8 +29,8 @@
 			<footer>
 				<div class="copyright" id="copyright">
 					<small>
-						<span itemprop="copyrightYear">2017</span>&copy; <span itemprop="name">ES2015 Modal</span> All Rights Reserved.<br>
-						This software is released under the MIT License.<br>
+						<span itemprop="copyrightYear">2017</span>&copy; <span itemprop="name">plugin es6 Modal</span> All Rights Reserved.<br>
+						This software is released under the MIT License.
 					</small>
 				</div>
 			</footer>
@@ -51,20 +51,26 @@
 				var modal = new Modal(btn_2);
 
 				modal.onBefore = function(){
-					console.log(this.target);
 					console.log('onBefore');
-					this.nextFlug = true;
 				};
 
 				modal.onBeforeModal = function(){
 					console.log('onBeforeModal');
-					this.nextFlug = true;
 				};
 
 				modal.onModal = function(){
 					console.log('onModal');
-					var content_inner = document.getElementById('content_inner');
-					content_inner.insertAdjacentHTML('beforeend', 'On Modal!');
+					return new Promise((resolve) => {
+						setTimeout(function(){
+							var content_inner = document.getElementById('content_inner');
+							content_inner.insertAdjacentHTML('beforeend', 'On Modal!');
+							resolve(this.nextFlug = true);
+						}, 1000);
+					});
+				};
+
+				modal.onModalAfter = function(){
+					console.log('onModalAfter');
 				};
 			})();
 		</script>

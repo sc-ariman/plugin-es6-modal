@@ -37,3 +37,19 @@ footer {
         transform: translate3d(0px, 4px, 0px);
     }
 }
+
+/*---- component  ----*/
+.modal {
+    .body_content {
+        max-width: 560px;
+
+        @include mbTab {
+            width: 80%;
+        }
+
+        .content_inner {
+            padding:10%;
+            background: #fff;
+        }
+    }
+}

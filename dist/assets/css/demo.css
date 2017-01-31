@@ -32,3 +32,19 @@ footer {
   -webkit-transform: translate3d(0px, 4px, 0px);
   transform: translate3d(0px, 4px, 0px);
 }
+
+/*---- component  ----*/
+.modal .body_content {
+  max-width: 560px;
+}
+
+@media screen and (max-width: 767px) {
+  .modal .body_content {
+    width: 80%;
+  }
+}
+
+.modal .body_content .content_inner {
+  padding: 10%;
+  background: #fff;
+}

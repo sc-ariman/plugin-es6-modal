@@ -12,6 +12,13 @@ component
   width: 100%;
   background: rgba(0, 0, 0, 0.7);
   opacity: 0;
+  -webkit-transition: opacity .3s;
+  transition: opacity .3s;
+}
+
+.modal.modal_activate {
+  display: block;
+  opacity: 1;
 }
 
 .modal_open {
@@ -34,14 +41,7 @@ component
 
 .modal .modal_wrap .wrap_body .body_content {
   position: relative;
-  max-width: 560px;
   margin: 0 auto;
-}
-
-@media screen and (max-width: 767px) {
-  .modal .modal_wrap .wrap_body .body_content {
-    width: 80%;
-  }
 }
 
 .modal .modal_wrap .wrap_body .body_content .modal_close {
@@ -79,6 +79,14 @@ component
   display: none;
   width: 100%;
   height: 100%;
+  opacity: 0;
+  -webkit-transition: opacity .5s;
+  transition: opacity .5s;
+}
+
+.loading.loading_activate {
+  display: block;
+  opacity: 1;
 }
 
 .loading .loading_wrapper {

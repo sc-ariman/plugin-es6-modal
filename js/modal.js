@@ -1,5 +1,5 @@
 /**
-Modal
+Plugin ES6 Modal
 
 Copyright (c) 2017
 
@@ -7,9 +7,8 @@ This software is released under the MIT License.
 http://opensource.org/licenses/mit-license.php
 */
 
-/* global $ */
 class Modal {
-  constructor(element, nextFlug) {
+  constructor(element) {
     if(element instanceof Object || Object.getPrototypeOf(element) === Object.prototype) {
       let targets = Array.from(element);
       if(targets.length == 0 || targets == void 0) {
@@ -22,14 +21,13 @@ class Modal {
       }
     }
 
-    this.target;
     this.nextFlug = true;
 
     return this;
   }
 
   onClick(target) {
-    const modalElement = `
+    const modalFrame = `
         <div class="modal" id="modal">
           <div class="modal_wrap">
             <div class="wrap_body">
@@ -37,7 +35,7 @@ class Modal {
                 <div class="modal_close">
                   ×
                 </div>
-                <div id="content_inner" class="content_inner" style="padding:10%; background: #fff;">
+                <div id="content_inner" class="content_inner">
                 </div>
               </div>
             </div>
@@ -48,24 +46,15 @@ class Modal {
       this.target = event_1.target;
       const body = document.body;
 
-      // before displaying a modal
       new Promise((resolve, reject) => {
-        this.onBefore();
-        let nextFlug = this.nextFlug;
+        let onBefore = this.onBefore();
 
-        if (nextFlug) {
-          resolve(nextFlug);
-        } else {
-          reject(new Error('error message'));
-        }
-      })
-      .then((nextFlug) => {
-        return new Promise((resolve, reject) => {
-          if (nextFlug) {
-            this.onBeforeModal();
-            // show loading
-            this.loading().showLoading();
-            resolve(nextFlug);
+        // Check if THEN
+        checkPromise(onBefore, () => {
+          let nextFlug = this.nextFlug;
+
+          if (this.nextFlug) {
+            resolve(this.nextFlug);
           } else {
             reject(new Error('error message'));
           }
@@ -73,43 +62,78 @@ class Modal {
       })
       .then((nextFlug) => {
         return new Promise((resolve, reject) => {
-          if (this.nextFlug) {
+          if (nextFlug) {
+            let onBeforeModal = this.onBeforeModal();
+
+            // Check if THEN
+            checkPromise(onBeforeModal, () => {
+              // show loading
+              this.loading().showLoading(this.loadingImage);
+
+              if (this.nextFlug) {
+                resolve(this.nextFlug);
+              } else {
+                reject(new Error('error message'));
+              }
+            });
+          } else {
+            reject(new Error('error message'));
+          }
+        });
+      })
+      .then((nextFlug) => {
+        return new Promise((resolve, reject) => {
+          if (nextFlug) {
+            // show modal
+            body.insertAdjacentHTML('beforeend', modalFrame);
+            body.classList.add('modal_open');
+
+            // Check if THEN
+            let onModal = this.onModal();
+            checkPromise(onModal, () => {
+              if (this.nextFlug) {
+                resolve(this.nextFlug);
+              } else {
+                reject(new Error('error message'));
+              }
+            });
+
+          } else {
+            reject(new Error('error message'));
+          }
+        });
+      })
+      .then((nextFlug) => {
+        return new Promise((resolve, reject) => {
+          if (nextFlug) {
             // hide loading
             this.loading().hideLoading();
 
-            // show modal
-            body.insertAdjacentHTML('beforeend', modalElement);
-            body.classList.add('modal_open');
-
-            this.onModal();
-
             const modal = document.getElementById('modal');
-            modal.style.display = 'block';
-            modal.style.transition = 'opacity .3s';
             setTimeout(() => {
-              modal.style.opacity = 1;
+              modal.classList.add('modal_activate');
             }, 1);
 
             // hide modal event
             modal.addEventListener('click', (event_2) => {
                 const _this = event_2.currentTarget;
-                _this.style.opacity = 0;
+                _this.classList.remove('modal_activate');
                 body.classList.remove('modal_open');
 
                 setTimeout(() => {
                   _this.parentNode.removeChild(_this);
+                  this.onModalAfter();
                 }, 300);
              });
 
-            // modal inner
+            // not hide content_inner in click event
             const content_inner = document.getElementById('content_inner');
             content_inner.addEventListener('click', (event_3) => {
               event_3.stopPropagation();
               event_3.preventDefault();
             });
 
-
-            // Modal scrolling on mobile devices
+            // modal scrolling on mobile devices
             body.addEventListener('touchmove', (e) => {
               let hasClass = body.classList.contains('modal_open');
               if(hasClass) {
@@ -122,11 +146,30 @@ class Modal {
         });
       })
       .catch((error) => {
-        // hide loading
+        let modal = document.getElementById('modal');
+        modal.parentNode.removeChild(modal);
         this.loading().hideLoading();
         console.log(error);
+
+        this.onError();
       });
     });
+
+    /*
+     * checkPromise - Promiseの有無をチェック
+     *
+     * @params (onFunc) function - Function to check for promise
+     * @params (func) function - Function after checked
+     */
+    function checkPromise(onFunc, func) {
+      if(onFunc !== void 0 && typeof onFunc.then === 'function') {
+        onFunc.then(() => {
+          func();
+        });
+      } else {
+        func();
+      }
+    }
   }
 
   onBefore() {
@@ -159,6 +202,26 @@ class Modal {
     });
   }
 
+  onModalAfter() {
+    return new Promise((resolve) => {
+      if(typeof this.onModalAfter === 'function'){
+        resolve(this.onModalAfter());
+      } else {
+        resolve();
+      }
+    });
+  }
+
+  onError() {
+    return new Promise((resolve) => {
+      if(typeof this.onError === 'function'){
+        resolve(this.onError());
+      } else {
+        resolve();
+      }
+    });
+  }
+
   loading(image) {
     if(image == void 0) {
       image = `
@@ -180,10 +243,7 @@ class Modal {
         document.body.insertAdjacentHTML('beforeend', loadingElement);
         let loading = document.getElementById('loading');
         if(loading !== null) {
-          loading.style.opacity = 0;
-          loading.style.display = 'block';
-          loading.style.transition = 'opacity .5s';
-          loading.style.opacity = 1;
+          loading.classList.add('loading_activate');
         }
       },
 
@@ -191,12 +251,10 @@ class Modal {
       hideLoading: () => {
         let loading = document.getElementById('loading');
         if(loading !== null) {
-          setTimeout(() => {
-            loading.style.opacity = 0;
-          }, 1);
+          loading.classList.remove('loading_activate');
           setTimeout(() => {
             loading.parentNode.removeChild(loading);
-          }, 500);
+          }, 300);
         }
       }
     };
