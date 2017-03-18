@@ -1,4 +1,4 @@
-/**
+/**!
 Plugin ES6 Modal
 
 Copyright (c) 2017
@@ -47,9 +47,9 @@ class Modal {
       const body = document.body;
 
       new Promise((resolve, reject) => {
-        let onBefore = this.onBefore();
+        let onBefore = this.onBefore;
 
-        // Check if THEN
+        // check if then
         checkPromise(onBefore, () => {
           let nextFlug = this.nextFlug;
 
@@ -63,9 +63,9 @@ class Modal {
       .then((nextFlug) => {
         return new Promise((resolve, reject) => {
           if (nextFlug) {
-            let onBeforeModal = this.onBeforeModal();
+            let onBeforeModal = this.onBeforeModal;
 
-            // Check if THEN
+            // check if then
             checkPromise(onBeforeModal, () => {
               // show loading
               this.loading().showLoading(this.loadingImage);
@@ -88,8 +88,8 @@ class Modal {
             body.insertAdjacentHTML('beforeend', modalFrame);
             body.classList.add('modal_open');
 
-            // Check if THEN
-            let onModal = this.onModal();
+            // check if then
+            let onModal = this.onModal;
             checkPromise(onModal, () => {
               if (this.nextFlug) {
                 resolve(this.nextFlug);
@@ -122,7 +122,7 @@ class Modal {
 
                 setTimeout(() => {
                   _this.parentNode.removeChild(_this);
-                  this.onModalAfter();
+                  checkPromise(this.onModalAfter);
                 }, 300);
              });
 
@@ -139,7 +139,7 @@ class Modal {
               if(hasClass) {
                 e.preventDefault();
               }
-            });
+            },{passive: false});
           } else {
             reject(new Error('error message'));
           }
@@ -162,54 +162,42 @@ class Modal {
      * @params (func) function - Function after checked
      */
     function checkPromise(onFunc, func) {
-      if(onFunc !== void 0 && typeof onFunc.then === 'function') {
-        onFunc.then(() => {
-          func();
-        });
+      if(onFunc !== void 0) {
+        if(typeof onFunc.then === 'function') {
+          onFunc()
+          .then(() => {
+            if(func !== void 0){
+              return func();
+            }
+          });
+        } else {
+          return new Promise((resolve) => {
+            resolve(onFunc());
+          })
+          .then(() => {
+            if(func !== void 0){
+              return func();
+            }
+          });
+        }
       } else {
-        func();
+        if(func !== void 0){
+          return func();
+        }
       }
     }
   }
 
   onBefore() {
-    return new Promise((resolve) => {
-      if(typeof this.onBefore === 'function'){
-        resolve(this.onBefore());
-      } else {
-        resolve();
-      }
-    });
   }
 
   onBeforeModal() {
-    return new Promise((resolve) => {
-      if(typeof this.onBeforeModal === 'function'){
-        resolve(this.onBeforeModal());
-      } else {
-        resolve();
-      }
-    });
   }
 
   onModal() {
-    return new Promise((resolve) => {
-      if(typeof this.onModal === 'function'){
-        resolve(this.onModal());
-      } else {
-        resolve();
-      }
-    });
   }
 
   onModalAfter() {
-    return new Promise((resolve) => {
-      if(typeof this.onModalAfter === 'function'){
-        resolve(this.onModalAfter());
-      } else {
-        resolve();
-      }
-    });
   }
 
   onError() {
