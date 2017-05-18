@@ -8,25 +8,39 @@ http://opensource.org/licenses/mit-license.php
 */
 
 class Modal {
-  constructor(element) {
-    if(element instanceof Object || Object.getPrototypeOf(element) === Object.prototype) {
-      let targets = Array.from(element);
-      if(targets.length == 0 || targets == void 0) {
-        console.warn('target undifined');
-        return false;
-      }
+  constructor(option) {
+    if(option instanceof Object || Object.getPrototypeOf(option) === Object.prototype) {
+      const target = option.target;
+      const loadingElement = option.loadingElement;
 
-      for (let target of targets) {
-        this.onClick(target);
+      if(target instanceof Object || Object.getPrototypeOf(target) === Object.prototype) {
+        // check target length
+        let targets = Array.from(target);
+        if(targets.length == 0 || targets == void 0) {
+          console.warn('Modal target undifined');
+          return false;
+        }
+
+        // check loading element
+        let loadingImage;
+        if(loadingElement == void 0 || loadingElement == null || loadingElement == '') {
+          loadingImage = `<img src="/assets/images/loading.gif">`;
+        } else {
+          loadingImage = loadingElement;
+        }
+
+        for (let target of targets) {
+          this.target = target;
+          this.onClick(target, loadingImage);
+        }
       }
     }
 
     this.nextFlug = true;
-
     return this;
   }
 
-  onClick(target) {
+  onClick(target, loadingImage) {
     const modalFrame = `
         <div class="modal" id="modal">
           <div class="modal_wrap">
@@ -43,13 +57,11 @@ class Modal {
         </div>`;
 
     target.addEventListener('click', (event_1) => {
-      this.target = event_1.target;
       const body = document.body;
 
       new Promise((resolve, reject) => {
         let onBefore = this.onBefore;
 
-        // check if then
         checkPromise(onBefore, () => {
           let nextFlug = this.nextFlug;
 
@@ -65,10 +77,9 @@ class Modal {
           if (nextFlug) {
             let onBeforeModal = this.onBeforeModal;
 
-            // check if then
             checkPromise(onBeforeModal, () => {
               // show loading
-              this.loading().showLoading(this.loadingImage);
+              this.loading().showLoading(loadingImage);
 
               if (this.nextFlug) {
                 resolve(this.nextFlug);
@@ -88,7 +99,6 @@ class Modal {
             body.insertAdjacentHTML('beforeend', modalFrame);
             body.classList.add('modal_open');
 
-            // check if then
             let onModal = this.onModal;
             checkPromise(onModal, () => {
               if (this.nextFlug) {
@@ -130,7 +140,6 @@ class Modal {
             const content_inner = document.getElementById('content_inner');
             content_inner.addEventListener('click', (event_3) => {
               event_3.stopPropagation();
-              event_3.preventDefault();
             });
 
             // modal scrolling on mobile devices
@@ -188,17 +197,13 @@ class Modal {
     }
   }
 
-  onBefore() {
-  }
+  onBefore() {}
 
-  onBeforeModal() {
-  }
+  onBeforeModal() {}
 
-  onModal() {
-  }
+  onModal() {}
 
-  onModalAfter() {
-  }
+  onModalAfter() {}
 
   onError() {
     return new Promise((resolve) => {
@@ -210,24 +215,24 @@ class Modal {
     });
   }
 
-  loading(image) {
-    if(image == void 0) {
-      image = `
-        <img src="/assets/images/loading.gif">`;
-    }
-
-    const loadingElement = `
-      <div class="loading" id="loading">
-        <div class="loading_wrapper">
-            <div class="loading_body">
-              ${image}
-            </div>
-          </div>
-      </div>`;
-
+  loading() {
     let obj = {
       // show loading
-      showLoading: () => {
+      showLoading: (loadingImage) => {
+        if(loadingImage == void 0 || loadingImage == null || loadingImage == '') {
+          loadingImage = `
+            <img src="/assets/images/loading.gif">`;
+        }
+
+        const loadingElement = `
+          <div class="loading" id="loading">
+            <div class="loading_wrapper">
+                <div class="loading_body">
+                  ${loadingImage}
+                </div>
+              </div>
+          </div>`;
+
         document.body.insertAdjacentHTML('beforeend', loadingElement);
         let loading = document.getElementById('loading');
         if(loading !== null) {
