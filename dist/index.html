@@ -45,10 +45,20 @@
 		<script>
 			/* global $ Modal */
 			(function(){
-				var btn_1 = $('.modalBtn');
-				var btn_2 = document.querySelectorAll('.modalBtn');
+				// You can also use bind of jquery.
+				// var target = $('.modalBtn');
+				var target = document.querySelectorAll('.modalBtn');
 
-				var modal = new Modal(btn_2);
+				// If modify loading elemnt.
+				var loadingElement = `<img src="/assets/images/loading.gif">`;
+
+				var modal = new PEModal({
+					target: target,
+					loadingElement: loadingElement
+				});
+				// or No option.
+				// var modal = new Modal(btn_2);
+
 
 				modal.onBefore = function(){
 					console.log('onBefore');
@@ -62,7 +72,7 @@
 					console.log('onModal');
 					return new Promise((resolve) => {
 						setTimeout(function(){
-							var content_inner = document.getElementById('content_inner');
+							var content_inner = document.getElementById('pem__contentInner');
 							content_inner.insertAdjacentHTML('beforeend', 'On Modal!');
 							resolve(this.nextFlug = true);
 						}, 1000);

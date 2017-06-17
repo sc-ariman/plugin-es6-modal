@@ -1,4 +1,4 @@
-/**!
+/**
 Plugin ES6 Modal
 
 Copyright (c) 2017
@@ -7,7 +7,7 @@ This software is released under the MIT License.
 http://opensource.org/licenses/mit-license.php
 */
 
-class Modal {
+class PEModal {
   constructor(option) {
     if(option instanceof Object || Object.getPrototypeOf(option) === Object.prototype) {
       const target = option.target;
@@ -17,7 +17,7 @@ class Modal {
         // check target length
         let targets = Array.from(target);
         if(targets.length == 0 || targets == void 0) {
-          console.warn('Modal target undifined');
+          console.warn('pem target undifined');
           return false;
         }
 
@@ -42,14 +42,14 @@ class Modal {
 
   onClick(target, loadingImage) {
     const modalFrame = `
-        <div class="modal" id="modal">
-          <div class="modal_wrap">
-            <div class="wrap_body">
-              <div class="body_content">
-                <div class="modal_close">
-                  ×
+        <div class="pem" id="pem">
+          <div class="pem__wrap">
+            <div class="pem__body">
+              <div class="pem__content">
+                <div class="pem__close">
+                  <span>×</span>
                 </div>
-                <div id="content_inner" class="content_inner">
+                <div id="pem__contentInner" class="pem__contentInner">
                 </div>
               </div>
             </div>
@@ -97,7 +97,7 @@ class Modal {
           if (nextFlug) {
             // show modal
             body.insertAdjacentHTML('beforeend', modalFrame);
-            body.classList.add('modal_open');
+            body.classList.add('pem__open');
 
             let onModal = this.onModal;
             checkPromise(onModal, () => {
@@ -119,16 +119,16 @@ class Modal {
             // hide loading
             this.loading().hideLoading();
 
-            const modal = document.getElementById('modal');
+            const modal = document.getElementById('pem');
             setTimeout(() => {
-              modal.classList.add('modal_activate');
+              modal.classList.add('pem--activate');
             }, 1);
 
             // hide modal event
             modal.addEventListener('click', (event_2) => {
                 const _this = event_2.currentTarget;
-                _this.classList.remove('modal_activate');
-                body.classList.remove('modal_open');
+                _this.classList.remove('pem--activate');
+                body.classList.remove('pem__open');
 
                 setTimeout(() => {
                   _this.parentNode.removeChild(_this);
@@ -136,15 +136,15 @@ class Modal {
                 }, 300);
              });
 
-            // not hide content_inner in click event
-            const content_inner = document.getElementById('content_inner');
-            content_inner.addEventListener('click', (event_3) => {
+            // not hide pem__contentInner in click event
+            const pem__contentInner = document.getElementById('pem__contentInner');
+            pem__contentInner.addEventListener('click', (event_3) => {
               event_3.stopPropagation();
             });
 
             // modal scrolling on mobile devices
             body.addEventListener('touchmove', (e) => {
-              let hasClass = body.classList.contains('modal_open');
+              let hasClass = body.classList.contains('pem__open');
               if(hasClass) {
                 e.preventDefault();
               }
@@ -155,7 +155,7 @@ class Modal {
         });
       })
       .catch((error) => {
-        let modal = document.getElementById('modal');
+        let modal = document.getElementById('pem');
         modal.parentNode.removeChild(modal);
         this.loading().hideLoading();
         console.log(error);
@@ -225,28 +225,32 @@ class Modal {
         }
 
         const loadingElement = `
-          <div class="loading" id="loading">
-            <div class="loading_wrapper">
-                <div class="loading_body">
+          <div class="pemLoading" id="pemLoading">
+            <div class="pemLoading__wrapper">
+                <div class="pemLoading__body">
                   ${loadingImage}
                 </div>
               </div>
           </div>`;
 
         document.body.insertAdjacentHTML('beforeend', loadingElement);
-        let loading = document.getElementById('loading');
-        if(loading !== null) {
-          loading.classList.add('loading_activate');
-        }
+        let loading = document.getElementById('pemLoading');
+        setTimeout(() => {
+            if(loading !== null) {
+              loading.classList.add('pemLoading--activate');
+            }
+          }, 1);
       },
 
       // hide loading
       hideLoading: () => {
-        let loading = document.getElementById('loading');
+        let loading = document.getElementById('pemLoading');
         if(loading !== null) {
-          loading.classList.remove('loading_activate');
           setTimeout(() => {
-            loading.parentNode.removeChild(loading);
+            loading.classList.remove('pemLoading--activate');
+            setTimeout(() => {
+              loading.parentNode.removeChild(loading);
+            }, 300);
           }, 300);
         }
       }
@@ -256,7 +260,7 @@ class Modal {
   }
 }
 
-export default Modal;
+export default PEModal;
 if (typeof window != 'undefined') {
-  !window.Modal && (window.Modal = Modal);
+  !window.PEModal && (window.PEModal = PEModal);
 }

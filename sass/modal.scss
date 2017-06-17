@@ -4,8 +4,8 @@
 /*-----------------------------------------------
 component
 -----------------------------------------------*/
-/*---- modal  ----*/
-.modal {
+/*---- pem  ----*/
+.pem {
     z-index: 10;
     position: fixed;
     top: 0;
@@ -13,36 +13,29 @@ component
     bottom: 0;
     left: 0;
     width: 100%;
-    background: rgba(0,0,0, .7);
+    background: rgba(0, 0, 0, .8);
     opacity: 0;
     transition: opacity .3s;
 
-    &.modal_activate {
-        display: block;
-        opacity: 1;
-    }
-
-    &_open {
-        overflow-y: hidden;
-    }
-
-    .modal_wrap {
+    .pem__wrap {
         display: table;
         width: 100%;
         height: 100%;
 
-        .wrap_body {
+        .pem__body {
             display: table-cell;
             width: 100%;
             height: 100%;
             vertical-align: middle;
             text-align: center;
 
-            .body_content {
+            .pem__content {
                 position: relative;
+                width: 50%;
                 margin: 0 auto;
 
-                .modal_close {
+                .pem__close {
+                    z-index: 1;
                     position: absolute;
                     top: -2rem;
                     right: 0;
@@ -50,51 +43,43 @@ component
                     line-height: 0;
                     color: #fff;
                 }
-
-                .content_iframe {
-                    position: relative;
-                    width: 100%;
-                    height: 100%;
-                    padding: 75% 0 0;
-
-                    & > * {
-                        position: absolute;
-                        top: 0;
-                        left: 0;
-                        width: 100%;
-                        height: 100%;
-                        background:  #b40d0d;
-                    }
-                }
             }
         }
     }
+
+    &.pem--activate {
+        display: block;
+        opacity: 1;
+    }
+
+    &.pem--open {
+        overflow-y: hidden;
+    }
 }
 
-.loading {
+.pemLoading {
     z-index: 11;
     position: fixed;
     top: 0;
     left: 0;
     bottom: 0;
     right: 0;
-    display: none;
+    display: block;
     width: 100%;
     height: 100%;
     opacity: 0;
-    transition: opacity .5s;
+    transition: all .3s;
 
-    &.loading_activate {
-        display: block;
+    &.pemLoading--activate {
         opacity: 1;
     }
 
-    .loading_wrapper {
+    .pemLoading__wrapper {
         display: table;
         width: 100%;
         height: 100%;
 
-        .loading_body {
+        .pemLoading__body {
             display: table-cell;
             text-align: center;
             vertical-align: middle;

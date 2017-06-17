@@ -39,17 +39,33 @@ footer {
 }
 
 /*---- component  ----*/
-.modal {
-    .body_content {
+.pem {
+    .pem__wrap .pem__body .pem__content {
         max-width: 560px;
 
         @include mbTab {
             width: 80%;
         }
 
-        .content_inner {
+        .pem__contentInner {
             padding:10%;
             background: #fff;
+        }
+
+        .pem__contentIframe {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            padding: 75% 0 0;
+
+            & > * {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background:  #b40d0d;
+            }
         }
     }
 }

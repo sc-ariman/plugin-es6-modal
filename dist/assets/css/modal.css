@@ -1,8 +1,8 @@
 /*-----------------------------------------------
 component
 -----------------------------------------------*/
-/*---- modal  ----*/
-.modal {
+/*---- pem  ----*/
+.pem {
   z-index: 10;
   position: fixed;
   top: 0;
@@ -10,28 +10,19 @@ component
   bottom: 0;
   left: 0;
   width: 100%;
-  background: rgba(0, 0, 0, 0.7);
+  background: rgba(0, 0, 0, 0.8);
   opacity: 0;
   -webkit-transition: opacity .3s;
   transition: opacity .3s;
 }
 
-.modal.modal_activate {
-  display: block;
-  opacity: 1;
-}
-
-.modal_open {
-  overflow-y: hidden;
-}
-
-.modal .modal_wrap {
+.pem .pem__wrap {
   display: table;
   width: 100%;
   height: 100%;
 }
 
-.modal .modal_wrap .wrap_body {
+.pem .pem__wrap .pem__body {
   display: table-cell;
   width: 100%;
   height: 100%;
@@ -39,12 +30,14 @@ component
   text-align: center;
 }
 
-.modal .modal_wrap .wrap_body .body_content {
+.pem .pem__wrap .pem__body .pem__content {
   position: relative;
+  width: 50%;
   margin: 0 auto;
 }
 
-.modal .modal_wrap .wrap_body .body_content .modal_close {
+.pem .pem__wrap .pem__body .pem__content .pem__close {
+  z-index: 1;
   position: absolute;
   top: -2rem;
   right: 0;
@@ -53,54 +46,46 @@ component
   color: #fff;
 }
 
-.modal .modal_wrap .wrap_body .body_content .content_iframe {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  padding: 75% 0 0;
+.pem.pem--activate {
+  display: block;
+  opacity: 1;
 }
 
-.modal .modal_wrap .wrap_body .body_content .content_iframe > * {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: #b40d0d;
+.pem.pem--open {
+  overflow-y: hidden;
 }
 
-.loading {
+.pemLoading {
   z-index: 11;
   position: fixed;
   top: 0;
   left: 0;
   bottom: 0;
   right: 0;
-  display: none;
+  display: block;
   width: 100%;
   height: 100%;
   opacity: 0;
-  -webkit-transition: opacity .5s;
-  transition: opacity .5s;
+  -webkit-transition: all .3s;
+  transition: all .3s;
 }
 
-.loading.loading_activate {
-  display: block;
+.pemLoading.pemLoading--activate {
   opacity: 1;
 }
 
-.loading .loading_wrapper {
+.pemLoading .pemLoading__wrapper {
   display: table;
   width: 100%;
   height: 100%;
 }
 
-.loading .loading_wrapper .loading_body {
+.pemLoading .pemLoading__wrapper .pemLoading__body {
   display: table-cell;
   text-align: center;
   vertical-align: middle;
 }
 
-.loading .loading_wrapper .loading_body img {
+.pemLoading .pemLoading__wrapper .pemLoading__body img {
   max-width: 44px;
 }
