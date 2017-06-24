@@ -36,13 +36,12 @@ class PEModal {
       }
     }
 
-    this.nextFlug = true;
     return this;
   }
 
   onClick(target, loadingImage) {
     const modalFrame = `
-        <div class="pem" id="pem">
+        <div class="pem" id="pem" role="dialog">
           <div class="pem__wrap">
             <div class="pem__body">
               <div class="pem__content">
@@ -62,11 +61,9 @@ class PEModal {
       new Promise((resolve, reject) => {
         let onBefore = this.onBefore;
 
-        checkPromise(onBefore, () => {
-          let nextFlug = this.nextFlug;
-
-          if (this.nextFlug) {
-            resolve(this.nextFlug);
+        checkPromise(onBefore, (result) => {
+          if (result) {
+            resolve(result);
           } else {
             reject(new Error('error message'));
           }
@@ -77,12 +74,12 @@ class PEModal {
           if (nextFlug) {
             let onBeforeModal = this.onBeforeModal;
 
-            checkPromise(onBeforeModal, () => {
+            checkPromise(onBeforeModal, (result) => {
               // show loading
               this.loading().showLoading(loadingImage);
 
-              if (this.nextFlug) {
-                resolve(this.nextFlug);
+              if (result) {
+                resolve(result);
               } else {
                 reject(new Error('error message'));
               }
@@ -100,9 +97,9 @@ class PEModal {
             body.classList.add('pem__open');
 
             let onModal = this.onModal;
-            checkPromise(onModal, () => {
-              if (this.nextFlug) {
-                resolve(this.nextFlug);
+            checkPromise(onModal, (result) => {
+              if (result) {
+                resolve(result);
               } else {
                 reject(new Error('error message'));
               }
@@ -156,42 +153,56 @@ class PEModal {
       })
       .catch((error) => {
         let modal = document.getElementById('pem');
-        modal.parentNode.removeChild(modal);
-        this.loading().hideLoading();
-        console.log(error);
+        if(modal !== null) {
+          modal.parentNode.removeChild(modal);
+        }
 
-        this.onError();
+        this.loading().hideLoading();
       });
     });
 
     /*
      * checkPromise - Promiseの有無をチェック
      *
-     * @params (onFunc) function - Function to check for promise
+     * @params (modalFunction) function - Function to check for promise
      * @params (func) function - Function after checked
      */
-    function checkPromise(onFunc, func) {
-      if(onFunc !== void 0) {
-        if(typeof onFunc.then === 'function') {
-          onFunc()
-          .then(() => {
-            if(func !== void 0){
-              return func();
+    function checkPromise(modalFunction, func) {
+      if(modalFunction !== void 0) {
+        if(typeof modalFunction.then === 'function') {
+          modalFunction()
+          .then((result) => {
+            if(func == void 0){
+              return func(true);
+            } else {
+              return func(result);
             }
+          })
+          .catch(() => {
+            return false;
           });
         } else {
-          return new Promise((resolve) => {
-            resolve(onFunc());
+          return new Promise((resolve, reject) => {
+            resolve(modalFunction());
           })
-          .then(() => {
-            if(func !== void 0){
-              return func();
+          .then((result) => {
+            if (typeof result === 'boolean') {
+              if(func == void 0){
+                return func(true);
+              } else {
+                return func(result);
+              }
+            } else {
+              return func(true);
             }
+          })
+          .catch(() => {
+            return false;
           });
         }
       } else {
         if(func !== void 0){
-          return func();
+          return false;
         }
       }
     }
@@ -204,16 +215,6 @@ class PEModal {
   onModal() {}
 
   onModalAfter() {}
-
-  onError() {
-    return new Promise((resolve) => {
-      if(typeof this.onError === 'function'){
-        resolve(this.onError());
-      } else {
-        resolve();
-      }
-    });
-  }
 
   loading() {
     let obj = {

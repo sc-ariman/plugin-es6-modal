@@ -62,6 +62,8 @@
 
 				modal.onBefore = function(){
 					console.log('onBefore');
+					// if stop creating modal
+					//return false;
 				};
 
 				// modal.onBeforeModal = function(){
@@ -74,7 +76,7 @@
 						setTimeout(function(){
 							var content_inner = document.getElementById('pem__contentInner');
 							content_inner.insertAdjacentHTML('beforeend', 'On Modal!');
-							resolve(this.nextFlug = true);
+							resolve(true);
 						}, 1000);
 					});
 				};
