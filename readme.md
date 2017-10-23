@@ -7,8 +7,8 @@ simple modal window
 ## Description
 
 You get any targets.  
-add something event for targets, and add any arguments. 
-event ignite.  
+add something event for targets, and add any arguments.  
+event ignite.  
 enjoy!
 
 ## Usage
