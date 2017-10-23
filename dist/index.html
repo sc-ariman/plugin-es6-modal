@@ -6,7 +6,7 @@
 		<meta name="viewport" content="width=device-width,initial-scale=1">
 		<link type="text/css" rel="stylesheet" href="/assets/css/demo.css">
 		<link type="text/css" rel="stylesheet" href="/assets/css/modal.css">
-		<script src="/assets/js/bundle/polyfill.js"></script>
+		<script src="//cdnjs.cloudflare.com/ajax/libs/babel-polyfill/6.26.0/polyfill.js"></script>
 		<title>plugin es6 Modal</title>
 	</head>
 	<body>
@@ -17,17 +17,30 @@
 				</h1>
 			</header>
 			<!-- /header -->
-			<main class="content">
-				<div>
-					<button type="button" class="modalBtn">Click Me!! 1</button>
+			<main class="contents">
+				<div class="content">
+					<button type="button" class="btnModal">Click Me!! 1</button>
 				</div>
-				<div>
-					<button type="button" class="modalBtn">Click Me!! 2</button>
+				<div class="content">
+					<button type="button" class="btnModal">Click Me!! 2</button>
+				</div>
+				<div class="content">
+					<button type="button" class="btnJquery_1">Click Me!! 3</button>
+				</div>
+				<div class="content">
+					<button type="button" class="btnJquery_1">Click Me!! 4</button>
+				</div>
+				<div id="test" class="target">
+					<button type="button" class="pemClose">close</button><br>
+					Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.<br>
+					Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.<br>
+					Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.<br>
+					Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
 				</div>
 			</main>
 			<!-- /.content -->
 			<footer>
-				<div class="copyright" id="copyright">
+				<div class="copyright">
 					<small>
 						<span itemprop="copyrightYear">2017</span>&copy; <span itemprop="name">plugin es6 Modal</span> All Rights Reserved.<br>
 						This software is released under the MIT License.
@@ -37,53 +50,54 @@
 			<!-- / footer -->
 		</div>
 		<!-- /.wrapper -->
-		<script
-			src="//code.jquery.com/jquery-3.1.1.min.js"
-			integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
-			crossorigin="anonymous"></script>
+		<script src="//code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
 		<script src="/assets/js/bundle/modal.js"></script>
 		<script>
-			/* global $ Modal */
+			/* global $ PEModal */
 			(function(){
+				var btn = document.getElementsByClassName('btnModal');
+
+				for (var i = 0; i < btn.length; i++) {
+					btn[i].addEventListener('click', function (e) {
+						var modal = new PEModal({
+							button: e.currentTarget,
+							// If modify loading elemnt.
+							loadingElement: '<div class="content"></div>',
+							loadingIcon: '<i class="icon icon-spinner"></i>',
+							insertElement: '<div>test</div>',
+							onBefore: function(){
+								console.log('onBefore');
+								// if stop creating modal
+								//return false;
+							},
+							onBeforeModal: function(){
+								console.log('onBeforeModal');
+							},
+							onModal: function(){
+								console.log('onModal');
+								return new Promise((resolve) => {
+									setTimeout(function(){
+										var content_inner = document.getElementById('pem__contentInner');
+										content_inner.insertAdjacentHTML('beforeend', 'On Modal!');
+										resolve(true);
+									}, 1000);
+								});
+							},
+							onCloseAfter: function() {
+								console.log('onCloseAfter');
+							}
+						});
+					}, false);
+				}
+
 				// You can also use bind of jquery.
-				// var target = $('.modalBtn');
-				var target = document.querySelectorAll('.modalBtn');
-
-				// If modify loading elemnt.
-				var loadingElement = `<img src="/assets/images/loading.gif">`;
-
-				var modal = new PEModal({
-					target: target,
-					loadingElement: loadingElement
-				});
-				// or No option.
-				// var modal = new Modal(btn_2);
-
-
-				modal.onBefore = function(){
-					console.log('onBefore');
-					// if stop creating modal
-					//return false;
-				};
-
-				// modal.onBeforeModal = function(){
-				// 	console.log('onBeforeModal');
-				// };
-
-				modal.onModal = function(){
-					console.log('onModal');
-					return new Promise((resolve) => {
-						setTimeout(function(){
-							var content_inner = document.getElementById('pem__contentInner');
-							content_inner.insertAdjacentHTML('beforeend', 'On Modal!');
-							resolve(true);
-						}, 1000);
+				var btn_jquery = $('.btnJquery_1');
+				btn_jquery.on('click', function(e){
+					var modal = new PEModal({
+						button: $(this),
+						target: $('#test'), // or document.getElementById('test');
 					});
-				};
-
-				modal.onModalAfter = function(){
-					console.log('onModalAfter');
-				};
+				});
 			})();
 		</script>
 	</body>

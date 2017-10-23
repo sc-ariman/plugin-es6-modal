@@ -4,28 +4,27 @@
 /*-----------------------------------------------
 demo
 -----------------------------------------------*/
+* {
+    box-sizing: border-box;
+}
+
 h1 {
     text-align: center;
     font-size: 2.4rem;
-}
-
-.content {
-    & > div {
-        padding: 20% 0;
-    }
 }
 
 footer {
     text-align: center;
 }
 
+
 /*---- button  ----*/
-.modalBtn {
+button {
     display: block;
     width: 80%;
     max-width: 300px;
     max-height: 50px;
-    margin: 10% auto;
+    margin: 5% auto;
     padding: 16px;
     text-align: center;
     background: #efefef;
@@ -64,8 +63,21 @@ footer {
                 left: 0;
                 width: 100%;
                 height: 100%;
-                background:  #b40d0d;
             }
         }
     }
+}
+
+.target {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    display: none;
+    width: 100%;
+    height: 100%;
+    padding: 5%;
+    background: rgba(255, 255, 255, 0.8);
+    -webkit-transition: all .3s;
+    transition: all .3s;
 }

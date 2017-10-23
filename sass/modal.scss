@@ -42,6 +42,10 @@ component
                     font-size: 3rem;
                     line-height: 0;
                     color: #fff;
+
+                    &:hover {
+                        cursor: pointer;
+                    }
                 }
             }
         }

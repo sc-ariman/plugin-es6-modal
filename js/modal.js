@@ -8,157 +8,217 @@ http://opensource.org/licenses/mit-license.php
 */
 
 class PEModal {
-  constructor(option) {
-    if(option instanceof Object || Object.getPrototypeOf(option) === Object.prototype) {
-      const target = option.target;
-      const loadingElement = option.loadingElement;
+  constructor(options) {
+    let defaults = {
+      button:         null,
+      modalElement:   null,
+      insertElement:  null,
+      loadingElement: null,
+      loadingIcon:    null,
+      target:         null,
+      onBefore:       null,
+      onBeforeModal:  null,
+      onModal:        null,
+      onCloseAfter:   null,
+    };
 
-      if(target instanceof Object || Object.getPrototypeOf(target) === Object.prototype) {
-        // check target length
-        let targets = Array.from(target);
-        if(targets.length == 0 || targets == void 0) {
-          console.warn('pem target undifined');
-          return false;
-        }
-
-        // check loading element
-        let loadingImage;
-        if(loadingElement == void 0 || loadingElement == null || loadingElement == '') {
-          loadingImage = `<img src="/assets/images/loading.gif">`;
-        } else {
-          loadingImage = loadingElement;
-        }
-
-        for (let target of targets) {
-          this.target = target;
-          this.onClick(target, loadingImage);
-        }
-      }
-    }
-
-    return this;
+    this.init(defaults, options);
   }
 
-  onClick(target, loadingImage) {
-    const modalFrame = `
-        <div class="pem" id="pem" role="dialog">
-          <div class="pem__wrap">
-            <div class="pem__body">
-              <div class="pem__content">
-                <div class="pem__close">
-                  <span>×</span>
-                </div>
-                <div id="pem__contentInner" class="pem__contentInner">
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>`;
+  init(defaults, options) {
+    if(options instanceof Object || Object.getPrototypeOf(options) === Object.prototype) {
+      this.options = defaults;
 
-    target.addEventListener('click', (event_1) => {
-      const body = document.body;
-
-      new Promise((resolve, reject) => {
-        let onBefore = this.onBefore;
-
-        checkPromise(onBefore, (result) => {
-          if (result) {
-            resolve(result);
-          } else {
-            reject(new Error('error message'));
+      // check exists same key
+      for(var key in options) {
+        if (options.hasOwnProperty(key)) {
+          var dest = Object.getOwnPropertyDescriptor(options, key);
+          if (dest.enumerable) {
+            this.options[key] = options[key];
           }
-        });
-      })
-      .then((nextFlug) => {
-        return new Promise((resolve, reject) => {
-          if (nextFlug) {
-            let onBeforeModal = this.onBeforeModal;
+        }
+      }
 
-            checkPromise(onBeforeModal, (result) => {
-              // show loading
-              this.loading().showLoading(loadingImage);
+      this.checkOptions();
+    } else {
+      return false;
+    }
+  }
 
-              if (result) {
-                resolve(result);
-              } else {
-                reject(new Error('error message'));
-              }
-            });
+  checkOptions() {
+    // check button
+    let button = this.options['button'];
+    if(button == null && button instanceof Object !== false) {
+      console.warn('pem button undifined!');
+      return false;
+    }
+
+    // check target
+    let target = this.options['target'];
+    if(target instanceof Object == false) {
+      this.options['target'] = null;
+    } else if(this.options['target'].length != void 0) {
+      // if jqurty object
+      this.options['target'] = target[0];
+    }
+
+    // check loading icon
+    this.options['loadingIcon'] = this.hasLoadingIcon(this.options['loadingIcon']);
+
+    // check loading element
+    this.options['loadingElement'] = this.hasLoadingElement(this.options['loadingElement'], this.options['loadingIcon']);
+
+    // check modal element
+    this.options['modalElement'] = this.hasModalElement(this.options['modalElement'], this.options['target']);
+
+    // check modal insert Element
+    this.options['insertElement'] = this.hasInsertElement(this.options['insertElement']);
+
+    // check function
+    const onBefore = this.options['onBefore'];
+    this.onBefore = (typeof onBefore == 'function') ? onBefore : () => {};
+
+    const onBeforeModal = this.options['onBeforeModal'];
+    this.onBeforeModal = (typeof onBeforeModal == 'function') ? onBeforeModal : () => {};
+
+    const onModal = this.options['onModal'];
+    this.onModal = (typeof onModal == 'function') ? onModal : () => {};
+
+    const onCloseAfter = this.options['onCloseAfter'];
+    this.onCloseAfter = (typeof onCloseAfter == 'function') ? onCloseAfter : () => {};
+
+    this.onIgnite();
+  }
+
+  onIgnite() {
+    const body = document.body;
+    const target = this.options['target'];
+    const loadingElement = this.options['loadingElement'];
+    const modalElement = this.options['modalElement'];
+    const insertElement = this.options['insertElement'];
+    const isTarget = modalElement == null && target !== null;
+
+    new Promise((resolve, reject) => {
+      checkPromise(this.onBefore, (result) => {
+        if (result) {
+          resolve(result);
+        } else {
+          reject(new Error('error message'));
+        }
+      });
+    })
+    .then((nextFlug) => {
+      return new Promise((resolve, reject) => {
+        if (nextFlug) {
+          checkPromise(this.onBeforeModal, (result) => {
+            // show loading
+            this.loading().showLoading(loadingElement);
+
+            if (result) {
+              resolve(result);
+            } else {
+              reject(new Error('error message'));
+            }
+          });
+        } else {
+          reject(new Error('error message'));
+        }
+      });
+    })
+    .then((nextFlug) => {
+      return new Promise((resolve, reject) => {
+        if (nextFlug) {
+          // show modal
+          if (isTarget) {
+            target.setAttribute('style', 'opacity: 0; display: block; -webkit-transition: all .3s; transition: all .3s;');
           } else {
-            reject(new Error('error message'));
+            body.insertAdjacentHTML('beforeend', modalElement);
+            if(insertElement !== null ) {
+              var content_inner = document.getElementById('pem__contentInner');
+              content_inner.insertAdjacentHTML('beforeend', insertElement);
+            }
           }
-        });
-      })
-      .then((nextFlug) => {
-        return new Promise((resolve, reject) => {
-          if (nextFlug) {
-            // show modal
-            body.insertAdjacentHTML('beforeend', modalFrame);
-            body.classList.add('pem__open');
 
-            let onModal = this.onModal;
-            checkPromise(onModal, (result) => {
-              if (result) {
-                resolve(result);
-              } else {
-                reject(new Error('error message'));
-              }
-            });
+          body.classList.add('pem__open');
 
-          } else {
-            reject(new Error('error message'));
-          }
-        });
-      })
-      .then((nextFlug) => {
-        return new Promise((resolve, reject) => {
-          if (nextFlug) {
-            // hide loading
-            this.loading().hideLoading();
+          checkPromise(this.onModal, (result) => {
+            if (result) {
+              resolve(result);
+            } else {
+              reject(new Error('error message'));
+            }
+          });
+        } else {
+          reject(new Error('error message'));
+        }
+      });
+    })
+    .then((nextFlug) => {
+      return new Promise((resolve, reject) => {
+        if (nextFlug) {
+          // hide loading
+          this.loading().hideLoading();
 
-            const modal = document.getElementById('pem');
-            setTimeout(() => {
-              modal.classList.add('pem--activate');
-            }, 1);
+          // add modal
+          const modal = (target == void 0 || target == null) ? document.getElementById('pem') : target;
+          setTimeout(() => {
+            if (isTarget) {
+              modal.style.opacity = 1;
+            }
+            modal.classList.add('pem--activate');
+          }, 1);
 
-            // hide modal event
-            modal.addEventListener('click', (event_2) => {
-                const _this = event_2.currentTarget;
-                _this.classList.remove('pem--activate');
-                body.classList.remove('pem__open');
+          // hide modal event
+          const pemClose = modal.getElementsByClassName('pemClose');
+          for (let self of Array.from(pemClose)) {
+            self.addEventListener('click', (event_2) => {
+              body.classList.remove('pem__open');
+              modal.classList.remove('pem--activate');
+
+              if (isTarget) {
+                modal.style.opacity = 0;
 
                 setTimeout(() => {
-                  _this.parentNode.removeChild(_this);
-                  checkPromise(this.onModalAfter);
+                  modal.style.display = 'none';
+                  checkPromise(this.onCloseAfter);
                 }, 300);
-             });
+              } else {
+                setTimeout(() => {
+                  modal.parentNode.removeChild(modal);
+                  checkPromise(this.onCloseAfter);
+                }, 300);
+              }
+            });
+          }
 
-            // not hide pem__contentInner in click event
-            const pem__contentInner = document.getElementById('pem__contentInner');
+          // not hide pem__contentInner in click event
+          const pem__contentInner = document.getElementById('pem__contentInner');
+          if(pem__contentInner !== null) {
             pem__contentInner.addEventListener('click', (event_3) => {
               event_3.stopPropagation();
             });
-
-            // modal scrolling on mobile devices
-            body.addEventListener('touchmove', (e) => {
-              let hasClass = body.classList.contains('pem__open');
-              if(hasClass) {
-                e.preventDefault();
-              }
-            },{passive: false});
-          } else {
-            reject(new Error('error message'));
           }
-        });
-      })
-      .catch((error) => {
-        let modal = document.getElementById('pem');
-        if(modal !== null) {
-          modal.parentNode.removeChild(modal);
-        }
 
-        this.loading().hideLoading();
+          // modal scrolling on mobile devices
+          body.addEventListener('touchmove', (e) => {
+            let hasClass = body.classList.contains('pem__open');
+            if(hasClass) {
+              e.preventDefault();
+            }
+          }, { passive: false });
+        } else {
+          reject(new Error('error message'));
+        }
       });
+    })
+    .catch((error) => {
+      console.log(error);
+      let modal = document.getElementById('pem');
+      if(modal !== null) {
+        modal.parentNode.removeChild(modal);
+      }
+
+      this.loading().hideLoading();
     });
 
     /*
@@ -208,39 +268,71 @@ class PEModal {
     }
   }
 
-  onBefore() {}
+  hasModalElement(element, target) {
+    // check modal element
+    if(element == null && target == null) {
+      element = `
+        <div id="pem" class="pem pemClose" role="dialog">
+          <div class="pem__wrap">
+            <div class="pem__body">
+              <div class="pem__content">
+                <div class="pem__close pemClose">
+                  <span>×</span>
+                </div>
+                <div id="pem__contentInner" class="pem__contentInner">
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>`;
+    }
 
-  onBeforeModal() {}
+    return element;
+  }
 
-  onModal() {}
+  hasInsertElement(element) {
+    // check modal insert element
+    if(element !== null && ({}).toString.call(element) === '[object String]' && 0 < element.length) {
+      return element;
+    } else {
+      return null;
+    }
+  }
 
-  onModalAfter() {}
+  hasLoadingIcon(icon) {
+    if(icon == void 0 || icon == null) {
+      icon = '<img src="/assets/images/loading.gif">';
+    }
+
+    return icon;
+  }
+
+  hasLoadingElement(element, icon) {
+    if(element == void 0 || element == null) {
+      element = `
+        <div id="pemLoading" class="pemLoading">
+          <div class="pemLoading__wrapper">
+              <div class="pemLoading__body">
+                ${icon}
+              </div>
+            </div>
+        </div>`;
+    }
+
+    return element;
+  }
 
   loading() {
     let obj = {
       // show loading
-      showLoading: (loadingImage) => {
-        if(loadingImage == void 0 || loadingImage == null || loadingImage == '') {
-          loadingImage = `
-            <img src="/assets/images/loading.gif">`;
-        }
-
-        const loadingElement = `
-          <div class="pemLoading" id="pemLoading">
-            <div class="pemLoading__wrapper">
-                <div class="pemLoading__body">
-                  ${loadingImage}
-                </div>
-              </div>
-          </div>`;
-
+      showLoading: (loadingElement) => {
         document.body.insertAdjacentHTML('beforeend', loadingElement);
         let loading = document.getElementById('pemLoading');
         setTimeout(() => {
-            if(loading !== null) {
-              loading.classList.add('pemLoading--activate');
-            }
-          }, 1);
+          if(loading !== null) {
+            loading.classList.add('pemLoading--activate');
+          }
+        }, 1);
       },
 
       // hide loading
@@ -250,7 +342,9 @@ class PEModal {
           setTimeout(() => {
             loading.classList.remove('pemLoading--activate');
             setTimeout(() => {
-              loading.parentNode.removeChild(loading);
+              if(loading.parentNode !== null) {
+                loading.parentNode.removeChild(loading);
+              }
             }, 300);
           }, 300);
         }

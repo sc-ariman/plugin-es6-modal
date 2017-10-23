@@ -46,6 +46,10 @@ component
   color: #fff;
 }
 
+.pem .pem__wrap .pem__body .pem__content .pem__close:hover {
+  cursor: pointer;
+}
+
 .pem.pem--activate {
   display: block;
   opacity: 1;
