@@ -3,10 +3,10 @@ var path    = require('path');
 
 module.exports = {
   entry: {
-    'modal':   './js/modal.js',
+    'pemodal': './js/pemodal.js',
   },
   output: {
-    path: __dirname + "/dist/js/bundle/",
+    path: __dirname + '/dist/js/',
     filename: "[name].js"
   },
   devtool: 'inline-source-map',

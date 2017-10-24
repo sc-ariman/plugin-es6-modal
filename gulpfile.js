@@ -43,10 +43,10 @@ gulp.task('webpack', function() {
       errorHandler: notify.onError("Error: <%= error.message %>")
     }))
     .pipe(webpack(require('./webpack.config.js')))
-    .pipe(gulp.dest(assets_dir + '/js/bundle/'))
+    .pipe(gulp.dest(assets_dir + '/js/'))
     .pipe(uglify({preserveComments: 'some'}))
     .pipe(rename({suffix: '.min'}))
-    .pipe(gulp.dest(assets_dir + '/js/bundle/'));
+    .pipe(gulp.dest(assets_dir + '/js/'));
 });
 
 gulp.task('browser-sync', function() {
@@ -61,7 +61,7 @@ gulp.task('browser-sync', function() {
 // watch
 gulp.task('watch', function(){
     // browser-sync
-    gulp.watch(assets_dir + '/js/bundle/*.js', ['browser-sync']);
+    gulp.watch(assets_dir + '/js/*.js', ['browser-sync']);
 
     // css
     gulp.watch(dev_dir + '/sass/*.scss', ['sass'], function(event) {});
