@@ -38,6 +38,7 @@ var btn = document.querySelectorAll('.btnModal');
 for (var i = 0; i < btn.length; i++) {
     btn[i].addEventListener('click', function (e) {
         var modal = new PEModal({
+            addModalClass: 'pem--addModal',
             button: e.currentTarget,
             // If modify loading elemnt.
             loadingElement: '<div class="loading"></div>',
@@ -72,6 +73,13 @@ for (var i = 0; i < btn.length; i++) {
 ```
 
 ### OPTION
+
+#### addModalClass
+
+* Type: string
+* Default: ''
+
+Add class to parent element.
 
 #### button
 
