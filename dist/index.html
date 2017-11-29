@@ -60,6 +60,7 @@
 				for (var i = 0; i < btn.length; i++) {
 					btn[i].addEventListener('click', function (e) {
 						var modal = new PEModal({
+							addModalClass: 'pem--addModal',
 							button: e.currentTarget,
 							// If modify loading elemnt.
 							loadingElement: '<div class="content"></div>',

@@ -10,6 +10,7 @@ http://opensource.org/licenses/mit-license.php
 class PEModal {
   constructor(options) {
     let defaults = {
+      addModalClass:  null,
       button:         null,
       modalElement:   null,
       insertElement:  null,
@@ -62,6 +63,9 @@ class PEModal {
       this.options['target'] = target[0];
     }
 
+    // check add Class for modal
+    this.options['addModalClass'] = this.hasAddModalClass(this.options['addModalClass']);
+
     // check loading icon
     this.options['loadingIcon'] = this.hasLoadingIcon(this.options['loadingIcon']);
 
@@ -69,7 +73,7 @@ class PEModal {
     this.options['loadingElement'] = this.hasLoadingElement(this.options['loadingElement'], this.options['loadingIcon']);
 
     // check modal element
-    this.options['modalElement'] = this.hasModalElement(this.options['modalElement'], this.options['target']);
+    this.options['modalElement'] = this.hasModalElement(this.options['modalElement'], this.options['target'], this.options['addModalClass']);
 
     // check modal insert Element
     this.options['insertElement'] = this.hasInsertElement(this.options['insertElement']);
@@ -268,11 +272,21 @@ class PEModal {
     }
   }
 
-  hasModalElement(element, target) {
+  hasAddModalClass(addClass) {
+    // check modal Class
+    if(addClass !== null && ({}).toString.call(addClass) === '[object String]' && 0 < addClass.length) {
+      return addClass;
+    } else {
+      return null;
+    }
+  }
+
+  hasModalElement(element, target, addModalClass) {
     // check modal element
     if(element == null && target == null) {
+      addModalClass = (addModalClass !==null) ? addModalClass : '';
       element = `
-        <div id="pem" class="pem pemClose" role="dialog">
+        <div id="pem" class="pem pemClose ${addModalClass}" role="dialog">
           <div class="pem__wrap">
             <div class="pem__body">
               <div class="pem__content">
