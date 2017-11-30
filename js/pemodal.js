@@ -100,7 +100,7 @@ class PEModal {
     const loadingElement = this.options['loadingElement'];
     const modalElement = this.options['modalElement'];
     const insertElement = this.options['insertElement'];
-    const isTarget = modalElement == null && target !== null;
+    const hasTarget = modalElement == null && target !== null;
 
     new Promise((resolve, reject) => {
       checkPromise(this.onBefore, (result) => {
@@ -133,7 +133,7 @@ class PEModal {
       return new Promise((resolve, reject) => {
         if (nextFlug) {
           // show modal
-          if (isTarget) {
+          if (hasTarget) {
             target.setAttribute('style', 'opacity: 0; display: block; -webkit-transition: all .3s; transition: all .3s;');
           } else {
             body.insertAdjacentHTML('beforeend', modalElement);
@@ -166,20 +166,20 @@ class PEModal {
           // add modal
           const modal = (target == void 0 || target == null) ? document.getElementById('pem') : target;
           setTimeout(() => {
-            if (isTarget) {
+            if (hasTarget) {
               modal.style.opacity = 1;
             }
             modal.classList.add('pem--activate');
           }, 1);
 
           // hide modal event
-          const pemClose = modal.getElementsByClassName('pemClose');
+          const pemClose = document.getElementsByClassName('pemClose');
           for (let self of Array.from(pemClose)) {
             self.addEventListener('click', (event_2) => {
               body.classList.remove('pem__open');
               modal.classList.remove('pem--activate');
 
-              if (isTarget) {
+              if (hasTarget) {
                 modal.style.opacity = 0;
 
                 setTimeout(() => {
@@ -188,8 +188,10 @@ class PEModal {
                 }, 300);
               } else {
                 setTimeout(() => {
-                  modal.parentNode.removeChild(modal);
-                  checkPromise(this.onCloseAfter);
+                  if(modal.parentNode !== null) {
+                    modal.parentNode.removeChild(modal);
+                    checkPromise(this.onCloseAfter);
+                  }
                 }, 300);
               }
             });
@@ -306,6 +308,10 @@ class PEModal {
 
   hasInsertElement(element) {
     // check modal insert element
+    if(element instanceof Object) {
+      element = element.outerHTML;
+    }
+
     if(element !== null && ({}).toString.call(element) === '[object String]' && 0 < element.length) {
       return element;
     } else {
