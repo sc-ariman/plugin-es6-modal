@@ -20,6 +20,8 @@ document.querySelector('.btn').addEventListener('click', function(e){
         button: e.currentTarget,
         insertElement: '<span>insert Element</span>',
         // or
+        // insertElement: document.querySelector or $('.jquery_element'),
+        // or
         // target: document.getElementById('test'),
     });
 });
@@ -116,7 +118,7 @@ If there is an element in the target, "target" takes precedence over "insertElem
 
 #### insertElement
 
-* Type: string
+* Type: string or element
 * Default: ''
 
 #### trigger

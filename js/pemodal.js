@@ -309,7 +309,16 @@ class PEModal {
   hasInsertElement(element) {
     // check modal insert element
     if(element instanceof Object) {
-      element = element.outerHTML;
+      let elements = '';
+
+      if(element.length == null && 0 < element.outerHTML.length) {
+        element = element.outerHTML;
+      } else if(0 < element.length) {
+        for (let self of Array.from(element)) {
+           elements += self.outerHTML;
+        }
+        element = elements;
+      }
     }
 
     if(element !== null && ({}).toString.call(element) === '[object String]' && 0 < element.length) {
