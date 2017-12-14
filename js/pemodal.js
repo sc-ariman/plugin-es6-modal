@@ -204,14 +204,6 @@ class PEModal {
               event_3.stopPropagation();
             });
           }
-
-          // modal scrolling on mobile devices
-          body.addEventListener('touchmove', (e) => {
-            let hasClass = body.classList.contains('pem__open');
-            if(hasClass) {
-              e.preventDefault();
-            }
-          }, { passive: false });
         } else {
           reject(new Error('error message'));
         }
