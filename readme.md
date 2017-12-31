@@ -90,15 +90,6 @@ Add class to parent element.
 
 Element query to use as button.
 
-#### close event
-If you want to close the opened modal what can add  "pem__close" class for any element.
-
-```
-exmple
-insertElement: '<span class="pemClose closeArea">insert Element</span>',
-```
-Modal close on click at "closeArea" class.
-
 #### target
 
 * Type: element
@@ -129,6 +120,15 @@ If there is an element in the target, "target" takes precedence over "insertElem
 
 * Type: string or element
 * Default: ''
+
+#### close event
+If you want to close the opened modal what can add  "pemClose" class for any element.
+
+```
+exmple
+insertElement: '<span class="pemClose closeArea">insert Element</span>',
+```
+Modal close on click at "closeArea" class.
 
 #### trigger
 
