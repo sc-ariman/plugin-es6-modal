@@ -9,13 +9,13 @@ var www_dir      = path.join(process.cwd(), 'dist');
 var assets_dir   = path.join(process.cwd(), 'dist/assets');
 var gulp         = require('gulp');
 var sass         = require('gulp-sass');
+var sourcemaps   = require('gulp-sourcemaps');
 var autoprefixer = require('gulp-autoprefixer');
 var cleanCss     = require('gulp-clean-css');
 var rename       = require('gulp-rename');
 var plumber      = require('gulp-plumber');
 var notify       = require('gulp-notify');
 var uglify       = require('gulp-uglify');
-var webpack      = require('gulp-webpack');
 var browserSync  = require('browser-sync');
 
 // sass
@@ -36,19 +36,6 @@ gulp.task('sass', function() {
     .pipe(gulp.dest(assets_dir + '/css/'));
 });
 
-// webpack
-gulp.task('webpack', function() {
-    gulp.src(dev_dir + '/js/*.js')
-    .pipe(plumber({
-      errorHandler: notify.onError("Error: <%= error.message %>")
-    }))
-    .pipe(webpack(require('./webpack.config.js')))
-    .pipe(gulp.dest(assets_dir + '/js/'))
-    .pipe(uglify({preserveComments: 'some'}))
-    .pipe(rename({suffix: '.min'}))
-    .pipe(gulp.dest(assets_dir + '/js/'));
-});
-
 gulp.task('browser-sync', function() {
     browserSync({
         server: {
@@ -65,9 +52,6 @@ gulp.task('watch', function(){
 
     // css
     gulp.watch(dev_dir + '/sass/*.scss', ['sass'], function(event) {});
-
-    // javascript
-    gulp.watch(dev_dir + '/js/*.js', ['webpack'], function(event) {});
 });
 
 gulp.task('default', ['watch']);

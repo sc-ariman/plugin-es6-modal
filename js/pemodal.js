@@ -56,7 +56,7 @@ class PEModal {
 
     // check target
     let target = this.options['target'];
-    if(target instanceof Object == false) {
+    if(target instanceof Object === false) {
       this.options['target'] = null;
     } else if(this.options['target'].length != void 0) {
       // if jqurty object
@@ -210,7 +210,7 @@ class PEModal {
       });
     })
     .catch((error) => {
-      console.log(error);
+      console.warn(error);
       let modal = document.getElementById('pem');
       if(modal !== null) {
         modal.parentNode.removeChild(modal);

@@ -1,43 +1,54 @@
-var webpack = require('webpack');
-var path    = require('path');
+const webpack = require('webpack');
+const path = require('path');
+
+let filename;
+let plugins;
+if (process.env.NODE_ENV === 'production') {
+  plugins = [
+    new webpack.optimize.UglifyJsPlugin({
+      sourceMap: true,
+      compress: {
+        // remove console.log
+        // drop_console: true
+      },
+    }),
+    new webpack.ProvidePlugin({
+      // $: 'jquery'
+    }),
+  ];
+
+  filename = '[name].min.js';
+} else {
+  plugins = [];
+  filename = '[name].js';
+}
 
 module.exports = {
   entry: {
     'pemodal': './js/pemodal.js',
   },
   output: {
-    path: __dirname + '/dist/js/',
-    filename: "[name].js"
+    filename: filename,
+    path: path.join(__dirname + '/dist/assets/js/'),
   },
-  devtool: 'inline-source-map',
-  resolveLoader: {
-    root: path.join(__dirname, "node_modules")
-  },
+  devtool: "#inline-source-map",
   module: {
-    loaders: [
-      {
-        loader: ['babel-loader'],
-        include: [
-          path.resolve(__dirname, "./js"),
-        ],
-        test: /\.js/,
-        exclude: /node_modules|bower_components/,
-        presets: ['es2015'],
-        query  : {
-          compact: false,
-        },
-        plugins: ['transform-es2015-modules-umd']
-      }
-    ]
+    rules: [{
+      test: /\.js$/,
+      exclude: /node_modules/,
+      use: [{
+        loader: 'babel-loader',
+        options: {
+          presets: ['env']
+        }
+      }],
+    },
+    {
+      enforce: 'pre',
+      test: /\.js$/,
+      exclude: /node_modules/,
+      loader: 'eslint-loader',
+    }],
   },
-  resolve: {
-    extensions: ['', '.js', '.jsx']
-  },
-  plugins: [
-    new webpack.ProvidePlugin({
-      $: "jquery",
-      jQuery: "jquery",
-      "window.jQuery": "jquery",
-    }),
-  ]
+  plugins: plugins
 };
